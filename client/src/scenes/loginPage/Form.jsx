@@ -7,6 +7,11 @@ import {
     useMediaQuery,
     Typography,
     useTheme,
+    Select,
+    MenuItem,
+    FormControl,
+    InputLabel
+
 } from "@mui/material"
 
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -24,8 +29,8 @@ const registerSchema = yup.object().shape({
     email: yup.string().email("invalid email").required("required"),
     password: yup.string().required("required"),
     location: yup.string().required("required"),
-    occupation: yup.string().required("required"),
-    picture: yup.string().required("required"),
+    accountType: yup.string().required("required"),
+    picture: yup.string()
 });
 
 const loginSchema = yup.object().shape({
@@ -39,8 +44,8 @@ const initialValuesRegister = {
     email: "",
     password: "",
     location: "",
-    occupation: "",
-    picture: "",
+    accountType: "",
+    picture: " ",
 };
 
 const initialValuesLogin = {
@@ -56,6 +61,7 @@ const Form = () => {
     const isNonMobile = useMediaQuery("(min-width:600px)");
     const isLogin = pageType === "login";
     const isRegister = pageType === "register";
+    const theme = useTheme();
 
     const register = async (values, onSubmitProps) => {
         // this allows us to send form info with image
@@ -66,7 +72,7 @@ const Form = () => {
         formData.append("picturePath", values.picture.name);
 
         const savedUserResponse = await fetch(
-            "http://localhost:3001/auth/register",
+            "http://localhost:5000/auth/register",
             {
                 method: "POST",
                 body: formData,
@@ -81,7 +87,7 @@ const Form = () => {
     };
 
     const login = async (values, onSubmitProps) => {
-        const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
+        const loggedInResponse = await fetch("http://localhost:5000/auth/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(values),
@@ -95,7 +101,7 @@ const Form = () => {
                     token: loggedIn.token,
                 })
             );
-            navigate("/home");
+            navigate("/");
         }
     };
 
@@ -163,18 +169,30 @@ const Form = () => {
                                     helperText={touched.location && errors.location}
                                     sx={{ gridColumn: "span 4" }}
                                 />
-                                <TextField
-                                    label="Occupation"
-                                    onBlur={handleBlur}
-                                    onChange={handleChange}
-                                    value={values.occupation}
-                                    name="occupation"
-                                    error={
-                                        Boolean(touched.occupation) && Boolean(errors.occupation)
-                                    }
-                                    helperText={touched.occupation && errors.occupation}
+                                <FormControl
+                                    fullWidth
                                     sx={{ gridColumn: "span 4" }}
-                                />
+                                    error={Boolean(touched.accountType) && Boolean(errors.accountType)}
+                                >
+                                    <InputLabel>Account Type</InputLabel>
+                                    <Select
+                                        label="Account Type"
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                        value={values.accountType}
+                                        name="accountType"
+                                    >
+                                        <MenuItem value="startup">StartUp</MenuItem>
+                                        <MenuItem value="investor">Investor</MenuItem>
+                                        <MenuItem value="funder">Funder</MenuItem>
+                                    </Select>
+                                    {touched.accountType && errors.accountType && (
+                                        <p style={{ color: "red", fontSize: "0.75rem", marginTop: "4px" }}>
+                                            {errors.accountType}
+                                        </p>
+                                    )}
+                                </FormControl>
+
                                 <Box
                                     gridColumn="span 4"
                                     border={`1px solid ${palette.neutral.medium}`}
@@ -197,7 +215,7 @@ const Form = () => {
                                             >
                                                 <input {...getInputProps()} />
                                                 {!values.picture ? (
-                                                    <p>Add Picture Here</p>
+                                                    <p className={theme.palette.mode==='dark'? 'dark-mode':'light-mode'}>Add Picture Here</p>
                                                 ) : (
                                                     <FlexBetween>
                                                         <Typography>{values.picture.name}</Typography>

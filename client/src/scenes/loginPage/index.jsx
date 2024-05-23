@@ -32,8 +32,7 @@ const LoginPage = () => {
         flexDirection="column"
         backgroundColor={theme.palette.background.alt}
       >
-        <Typography fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}
-        color="white"
+        <Typography className={theme.palette.mode==='dark'? 'dark-mode':'light-mode'} fontWeight="500" variant="h5" sx={{ mb: "1.5rem" }}
         >
           Welcome to SparkUp, the platform to give a flight to your dream startup!
         </Typography>
